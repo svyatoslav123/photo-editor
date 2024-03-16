@@ -5,6 +5,7 @@ from PIL import ImageDraw
 from PIL import Image
 from PIL import ImageFilter
 from PyQt6.QtWidgets import *
+from PyQt6.QtGui import QImage, QPixmap
 app = QApplication([])
 app.setStyleSheet("""
      QWidget {
@@ -41,6 +42,25 @@ app.setStyleSheet("""
       }
 
  """)
+def pil2pixmap(im):
+    if im.mode == "RGB":
+        r, g, b = im.split()
+        im = Image.merge("RGB", (b, g, r))
+    elif im.mode == "RGBA":
+        r, g, b, a = im.split()
+        im = Image.merge("RGBA", (b, g, r, a))
+    elif im.mode == "L":
+        im = im.convert("RGBA")
+    im2 = im.convert("RGBA")
+    data = im2.tobytes("raw", "RGBA")
+    qim = QImage(data, im.size[0], im.size[1], QImage.Format_ARGB32)
+    pixmap = QPixmap.fromImage(qim)
+    return pixmap
+
+
+
+
+
 
 window = QWidget()
 window.resize(700, 500)
@@ -78,7 +98,35 @@ v2.addLayout(h1)
 window.setLayout(main_line)
 
 
+class WorkWithPhoto:
+    def __init__(self):
+        self.image = None
+        self.folder = None
+    def load(self):
+        full_path = os.path.join(self.folder, self.image_name)
+        self.image = Image.open(full_path)
 
+
+
+
+    def show_image(self):
+        pixel = pil2pixmap(self.image)
+        imgLbl.setPixmap(pixel)
+
+work_with_photo = WorkWithPhoto()
+
+def show_directory():
+    work_with_photo.folder = QFileDialog.getExistingDirectory()
+    list_f = os.listdir(work_with_photo.folder)
+    list.clear()
+    list.addItems(list_f)
+def show_photo():
+    image_name = list.currentItem().text()
+    work_with_photo.image_name = image_name
+    work_with_photo.load()
+    work_with_photo.show_image()
+list.currentRowChanged.connect(show_photo)
+papka_btn.clicked.connect(show_directory)
 
 window.show()
 app.exec()
