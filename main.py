@@ -4,8 +4,8 @@ from PIL import ImageFont
 from PIL import ImageDraw
 from PIL import Image
 from PIL import ImageFilter
-from PyQt6.QtWidgets import *
-from PyQt6.QtGui import QImage, QPixmap
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import QImage, QPixmap
 app = QApplication([])
 app.setStyleSheet("""
      QWidget {
@@ -70,6 +70,9 @@ right_btn = QPushButton("Вправо")
 dzerkalo_btn = QPushButton("Дзеркало")
 rizkist_btn = QPushButton("Різкість")
 rotare_btn = QPushButton("Перевернути")
+negr_btn = QPushButton("ЧОРНО-БІЛИЙ")
+contor_btn = QPushButton("КОНТОР")
+emboss_btn = QPushButton("ТИСНЕННЯ")
 photo = QLabel("img.png")
 list = QListWidget()
 
@@ -90,6 +93,9 @@ h1.addWidget(left_btn)
 h1.addWidget(right_btn)
 h1.addWidget(dzerkalo_btn)
 h1.addWidget(rizkist_btn)
+h1.addWidget(negr_btn)
+h1.addWidget(contor_btn)
+h1.addWidget(emboss_btn)
 h1.addWidget(rotare_btn)
 v2.addWidget(photo)
 v2.addLayout(h1)
@@ -111,10 +117,31 @@ class WorkWithPhoto:
 
     def show_image(self):
         pixel = pil2pixmap(self.image)
-        imgLbl.setPixmap(pixel)
+        photo.setPixmap(pixel)
     def rozmitya(self):
         self.image = self.image.filter(ImageFilter.BLUR)
-        self.shw_image()
+        self.show_image()
+    def ROTARE(self):
+        self.image = self.image.transpose(Image.ROTATE_180)
+        self.show_image()
+    def DZERKALO(self):
+        self.image = self.image.transpose(Image.FLIP_LEFT_RIGHT)
+        self.show_image()
+    def LEFT(self):
+        self.image = self.image.transpose(Image.ROTATE_270)
+        self.show_image()
+    def RIGHT(self):
+        self.image = self.image.transpose(Image.ROTATE_90)
+        self.show_image()
+    def NEGR(self):
+        self.image = self.image.convert("L")
+        self.show_image()
+    def CONTOR(self):
+        self.image = self.image.filter(ImageFilter.CONTOUR)
+        self.show_image()
+    def EMBOSS(self):
+        self.image = self.image.filter(ImageFilter.EMBOSS)
+        self.show_image()
 work_with_photo = WorkWithPhoto()
 
 def show_directory():
@@ -134,7 +161,14 @@ def show_photo():
     work_with_photo.show_image()
 list.currentRowChanged.connect(show_photo)
 papka_btn.clicked.connect(show_directory)
-rizkist_btn.clicked.connect(WorkWithPhoto.rozmitya)
+rizkist_btn.clicked.connect(work_with_photo.rozmitya)
+rotare_btn.clicked.connect(work_with_photo.ROTARE)
+dzerkalo_btn.clicked.connect(work_with_photo.DZERKALO)
+left_btn.clicked.connect(work_with_photo.LEFT)
+right_btn.clicked.connect(work_with_photo.RIGHT)
+negr_btn.clicked.connect(work_with_photo.NEGR)
+contor_btn.clicked.connect(work_with_photo.CONTOR)
+emboss_btn.clicked.connect(work_with_photo.EMBOSS)
 window.show()
 app.exec()
 
