@@ -112,7 +112,9 @@ class WorkWithPhoto:
     def show_image(self):
         pixel = pil2pixmap(self.image)
         imgLbl.setPixmap(pixel)
-
+    def rozmitya(self):
+        self.image = self.image.filter(ImageFilter.BLUR)
+        self.shw_image()
 work_with_photo = WorkWithPhoto()
 
 def show_directory():
@@ -132,7 +134,7 @@ def show_photo():
     work_with_photo.show_image()
 list.currentRowChanged.connect(show_photo)
 papka_btn.clicked.connect(show_directory)
-
+rizkist_btn.clicked.connect(WorkWithPhoto.rozmitya)
 window.show()
 app.exec()
 
