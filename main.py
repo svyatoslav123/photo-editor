@@ -118,8 +118,13 @@ work_with_photo = WorkWithPhoto()
 def show_directory():
     work_with_photo.folder = QFileDialog.getExistingDirectory()
     list_f = os.listdir(work_with_photo.folder)
+
     list.clear()
-    list.addItems(list_f)
+    for file in list_f:
+        if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp')):
+            list.addItem(file)
+
+
 def show_photo():
     image_name = list.currentItem().text()
     work_with_photo.image_name = image_name
